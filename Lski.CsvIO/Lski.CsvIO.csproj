@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A32E8C20-C1E6-42CB-9E87-30428D90D048}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lski.CsvIO</RootNamespace>
+    <AssemblyName>CsvIO</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ConvertTo\BaseToDate.cs" />
+    <Compile Include="ConvertTo\ConvertTo.cs" />
+    <Compile Include="ConvertTo\ToBool.cs" />
+    <Compile Include="ConvertTo\ToByte.cs" />
+    <Compile Include="ConvertTo\ToDateDMY.cs" />
+    <Compile Include="ConvertTo\ToDateMDY.cs" />
+    <Compile Include="ConvertTo\ToDateTime.cs" />
+    <Compile Include="ConvertTo\ToDateYMD.cs" />
+    <Compile Include="ConvertTo\ToDecimal.cs" />
+    <Compile Include="ConvertTo\ToDouble.cs" />
+    <Compile Include="ConvertTo\ToInt16.cs" />
+    <Compile Include="ConvertTo\ToInt32.cs" />
+    <Compile Include="ConvertTo\ToInt64.cs" />
+    <Compile Include="ConvertTo\ToSByte.cs" />
+    <Compile Include="ConvertTo\ToSingle.cs" />
+    <Compile Include="ConvertTo\ToText.cs" />
+    <Compile Include="ConvertTo\ToUInt16.cs" />
+    <Compile Include="ConvertTo\ToUInt32.cs" />
+    <Compile Include="ConvertTo\ToUInt64.cs" />
+    <Compile Include="CsvExport.cs" />
+    <Compile Include="CsvExportLink.cs" />
+    <Compile Include="CsvExportSettings.cs" />
+    <Compile Include="CsvImport.cs" />
+    <Compile Include="CsvImportLink.cs" />
+    <Compile Include="CsvImportSettings.cs" />
+    <Compile Include="CsvLink.cs" />
+    <Compile Include="CsvSettings.cs" />
+    <Compile Include="FromCsv.cs" />
+    <Compile Include="ICsvExportWriter.cs" />
+    <Compile Include="InternalCsvLink.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ToCsv.cs" />
+    <Compile Include="Transformations\DefaultValue.cs" />
+    <Compile Include="Transformations\InsertText.cs" />
+    <Compile Include="Transformations\Left.cs" />
+    <Compile Include="Transformations\Match.cs" />
+    <Compile Include="Transformations\NumericsOnly.cs" />
+    <Compile Include="Transformations\Rearrange.cs" />
+    <Compile Include="Transformations\Replace.cs" />
+    <Compile Include="Transformations\Right.cs" />
+    <Compile Include="Transformations\StripChars.cs" />
+    <Compile Include="Transformations\StripSpaces.cs" />
+    <Compile Include="Transformations\ToLowerCase.cs" />
+    <Compile Include="Transformations\ToTitleCase.cs" />
+    <Compile Include="Transformations\ToUpperCase.cs" />
+    <Compile Include="Transformations\Transformation.cs" />
+    <Compile Include="Transformations\Transformations.cs" />
+    <Compile Include="Transformations\Trim.cs" />
+    <Compile Include="Transformations\TrimEnd.cs" />
+    <Compile Include="Transformations\TrimStart.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
