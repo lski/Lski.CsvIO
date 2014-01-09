@@ -82,7 +82,7 @@ namespace Lski.CsvIO {
 		/// <param name="row">The datarow to fill</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		private T FromCsvLine<T>(CsvImportSettings map, ICollection<InternalCsvLink> mapLinks, string[] csvLine) {
+		private T FromCsvLine<T>(CsvImportSettings map, ICollection<InternalCsvLink> mapLinks, IEnumerable<string> csvLine) {
 
 			// Save recalling it
 			var csvLineCount = csvLine.Count(); 
@@ -94,7 +94,7 @@ namespace Lski.CsvIO {
 				// Because some lines could possibly be smaller than the position of the map, dont attempt to import it!
 				if (mapLink.Position < csvLineCount) {
 
-					ProcessImportedValue(map, mapLink, result, csvLine[mapLink.Position]);
+					ProcessImportedValue(map, mapLink, result, csvLine.ElementAt(mapLink.Position));
 				}
 			}
 
@@ -142,16 +142,97 @@ namespace Lski.CsvIO {
 		/// <param name="delimiter">The delimiter to split the csv line with</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		protected virtual string[] SplitCsvLine(string csvLine, string delimiter) {
-			return csvLine.Split(new string[] { delimiter }, StringSplitOptions.None);
+		public IEnumerable<string> SplitCsvLine(string str, string splitStr, char textChr) {
+
+			if (splitStr.Length == 1) {
+				return SplitCsvLine(str, splitStr[0], textChr);
+			}
+
+			var lst = new List<string>();
+			var currentString = new StringBuilder();
+			var textMode = false;
+			var firstSplitChr = splitStr[0];
+
+			for (int i = 0, stringLength = str.Length, splitStringLength = splitStr.Length; i < stringLength; i++) {
+
+				var c = str[i];
+
+				if (c == textChr) {
+
+					textMode = !textMode;
+					currentString.Append(c);
+				}
+				else {
+
+					if (!textMode && c == firstSplitChr) {
+
+						var match = true;
+
+						for (int j = i + 1, k = 1; j < stringLength && k < splitStringLength; j++, k++) {
+
+							if (str[j] != splitStr[k]) {
+								match = false;
+								break;
+							}
+						}
+
+						if (match) {
+							lst.Add(currentString.ToString());
+							currentString = new StringBuilder();
+						}
+						else {
+							currentString.Append(c);
+						}
+					}
+					else {
+						currentString.Append(c);
+					}
+				}
+			}
+
+			lst.Add(currentString.ToString());
+
+			return lst;
 		}
 
+		public IEnumerable<string> SplitCsvLine(string str, char splitChr, char textChr) {
+
+			var lst = new List<string>();
+			var currentString = new StringBuilder();
+			var textMode = false;
+
+			for (int i = 0, n = str.Length; i < n; i++) {
+
+				var c = str[i];
+
+				if (c == textChr) {
+
+					textMode = !textMode;
+					currentString.Append(c);
+				}
+				else {
+
+					if (!textMode && c == splitChr) {
+						lst.Add(currentString.ToString());
+						currentString = new StringBuilder();
+					}
+					else {
+						currentString.Append(c);
+					}
+				}
+			}
+
+			lst.Add(currentString.ToString());
+
+			return lst;
+		}
+	
 		/// <summary>
 		/// Uses the CSV files first livne to create a set of auto generated links to store in map.Links
 		/// </summary>
 		/// <param name="rdr"></param>
 		/// <returns></returns>
-		private ICollection<CsvImportLink> CreateLinksFromHeader(String delimiter, StreamReader rdr) {
+		private ICollection<CsvImportLink> CreateLinksFromHeader(String delimiter, String textDelimiter, StreamReader rdr) {
 
 			var line = rdr.ReadLine();
 			var lst = new List<CsvImportLink>();
@@ -161,7 +242,7 @@ namespace Lski.CsvIO {
 			}
 
 			var i = 0;
-			foreach (var item in SplitCsvLine(line, delimiter)) {
+			foreach (var item in SplitCsvLine(line, delimiter, textDelimiter[0])) {
 				lst.Add(new CsvImportLink() {
 					Position = i++,
 					Property = item
@@ -290,7 +371,7 @@ namespace Lski.CsvIO {
 			}
 			// If there are no links then get names for the links from the first line of 
 			else if(settings.Links == null) {
-				settings.Links = CreateLinksFromHeader(settings.Delimiter, rdr);
+				settings.Links = CreateLinksFromHeader(settings.Delimiter, settings.TextDelimiter, rdr);
 			}
 			// If there are links and the file has an header move the pointer in the stream on one line
 			else if (settings.Links != null && settings.Header) {
@@ -298,12 +379,29 @@ namespace Lski.CsvIO {
 			}
 
 			var internalMap = CreateInternalLinks<T>(settings.Links, settings);
+			
+			// If the delimiter is only 1 character then run the character only version of SplitCsvLine (it does handle it internally but this saves calling it each line
+			if(settings.Delimiter.Length == 1) {
 
-			while (!rdr.EndOfStream) {
+				var delimiter = settings.Delimiter[0];
+				var textDelimiter = settings.TextDelimiter[0];
 
-				// Add the row to the dataTable
-				yield return FromCsvLine<T>(settings, internalMap, SplitCsvLine(rdr.ReadLine(), settings.Delimiter));
+				// Return each result in turn, to avoid loading into memory
+				while (!rdr.EndOfStream) {
+					yield return FromCsvLine<T>(settings, internalMap, SplitCsvLine(rdr.ReadLine(), delimiter, textDelimiter));
+				}
 			}
+			else {
+
+				var delimiter = settings.Delimiter;
+				var textDelimiter = settings.TextDelimiter[0];
+
+				// Return each result in turn, to avoid loading into memory
+				while (!rdr.EndOfStream) {
+					yield return FromCsvLine<T>(settings, internalMap, SplitCsvLine(rdr.ReadLine(), delimiter, textDelimiter));
+				}
+			}
+			
 		}
 
 		#endregion
