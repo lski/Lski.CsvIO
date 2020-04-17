@@ -1,6 +1,12 @@
 CsvIO
 =====
 
+## Deprecated
+
+__This project works fine, however I am no longer maintaining it and I would recommend https://joshclose.github.io/CsvHelper/ as its actively maintained and has good features.__
+
+----
+
 Enables simple import and export of Csv data to and from files or streams from objects
 
 Import Usage:
